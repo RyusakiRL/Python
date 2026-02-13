@@ -1,4 +1,4 @@
-students = []
+students = {}
 
 def student(act, students_dictionary, name, grade):
     if act == "add":
@@ -27,9 +27,11 @@ def student(act, students_dictionary, name, grade):
 
 while True:
     print("\n----------------MAIN SCHOOL----------------\n")
-    action = input("Type: 'add', 'remove' or 'search'\n")
+    action = input("Type: 'add', 'remove', 'search' or 'exit'\n")
     
-    if action == "add":
+    if action == "exit": break
+    
+    elif action == "add":
         nam = input(("Insert the student name\n"))
         note = float(input("Insert the exam grade\n"))
         student(action, students, nam, note)
