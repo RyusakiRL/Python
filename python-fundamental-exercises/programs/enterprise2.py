@@ -15,7 +15,7 @@ def stock_list(sr, stock_list, marksearch, newquantity, newprice):
        shop_stock.append(new_instrument)
        print(f"Sucess! {marksearch} added to stock.")
 
-    if sr == "sell":
+    elif sr == "sell":
         for instrument in stock_list:
 
             if instrument["Mark"] == marksearch:
@@ -40,7 +40,7 @@ while True:
         stock_list(sell, shop_stock, mark, 0, 0 )
     else:
         mark = input("Insert the name of mark\n")
-        priceu = int(input("Insert the price\n"))
+        priceu = float(input("Insert the price\n"))
         quant = int(input("Insert the quantity\n"))
         stock_list(sell, shop_stock, mark, quant, priceu)
 
