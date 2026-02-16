@@ -20,7 +20,6 @@ def stock_management(liststock, action, item, quantity, price):
                 print("Insufficient quantity")
         else:
             print("Item not found")
-
 while True:
     
     act = input("Type: 'add', 'sell', 'exit'\n")
