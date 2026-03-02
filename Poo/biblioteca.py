@@ -20,7 +20,7 @@ class Usuario:
             self.livroposse = ""
         else:
             print(f"{self.nome} nao pegou nenhum livro da biblioteca")
-
+    
 class Acervo:
     def __init__(self, titulo, descricao, autor, quantidade_livre, quantidade_ocupado=0):
         self.titulo = titulo
