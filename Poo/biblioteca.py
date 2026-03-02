@@ -53,7 +53,7 @@ class Acervo:
     
 while True:
     print("===================================MAIN MENU===================================")
-    action = str(input("Escreva uma dessas ação\n "
+    action = str(input("Escreva uma dessas ação:\n "
     "[reservar]  [realizar emprestimo] [adicionar livro] [adicionar usuario] [devolver livro] [listar] [sair]\n"
     ))
     

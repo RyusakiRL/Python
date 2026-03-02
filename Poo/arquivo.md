@@ -1,4 +1,4 @@
-# Planejamento do Sistema de Biblioteca
+# Diagrama de caso e uso
 
 ```mermaid
 classDiagram
