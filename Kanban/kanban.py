@@ -164,8 +164,7 @@ while True:
 
         case "delete":
             title_name = str(input("Insert the title "))
-            cursorcon.execute("DELETE FROM data_task WHERE title = ?", (title_name,))
-
+            
             title_existence = False
             for titles in tasks_list:
                 if titles.title == title_name:
