@@ -4,14 +4,20 @@ import sqlite3
 
 
 def conexao():
-    """Cria uma conexão com o banco de dados SQLite e retorna a conexão."""
-    return sqlite3.connect("forja.db")
+    """Cria uma conexão com o banco de dados 'forja.db' e a retorna.
+    - A conexão é fechada automaticamente após o uso, graças ao gerenciador de contexto 'yield'.
+    """
+    conn = sqlite3.connect("forja.db")
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 def criar_tabela_guilda():
     """Cria as tabelas 'aventureiros' e 'armas' no banco de dados, caso elas ainda não existam."""
-    with conexao() as conn:
-        cursor = conn.cursor()
+    with sqlite3.connect("forja.db") as connect:
+        cursor = connect.cursor()
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS aventureiros(
@@ -29,6 +35,17 @@ def criar_tabela_guilda():
                 dano INTEGER NOT NULL,
                 dono_id INTEGER NOT NULL,
                 FOREIGN KEY (dono_id) REFERENCES aventureiros(id)
+            )"""
+        )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS contratos(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome_monstro TEXT NOT NULL,
+                recompensa INTEGER NOT NULL,
+                rank_minimo INTEGER NOT NULL,
+                id_aventureiro INTEGER,
+                FOREIGN KEY (id_aventureiro) REFERENCES aventureiros(id)
             )"""
         )
 
