@@ -9,6 +9,8 @@ from functions import (
     criar_livro,
     listar_livros_de_todos_autores,
     remover_livro,
+    editar_nomelivro,
+    quantidade_livro_autor,
 )
 from schemas import AutorBase, LivroBase
 
@@ -43,3 +45,18 @@ def busca_genero_endpoint(genero: str, db: Session = Depends(get_db)):
 def excluir_livro_endpoint(livro_id: int, db: Session = Depends(get_db)):
     """Endpoint para excluir um livro, utilizando a função excluir_livro."""
     return remover_livro(db, livro_id)
+
+
+@app.put("/livros/editar/{livro_id}")
+def editar_livro_endpoint(
+    id_livro: int, novo_titulo: str, db: Session = Depends(get_db)
+):
+    """Edita o titulo de um livro a partir de seu id"""
+    return editar_nomelivro(db, id_livro, novo_titulo)
+
+
+@app.get("/autor/{autor_id}/livros")
+def listar_livros_autor_endpoint(autor_id: int, db: Session = Depends(get_db)):
+    """Lista a quantidade de livros escritos por determinado autor"""
+
+    return quantidade_livro_autor(db, autor_id)
