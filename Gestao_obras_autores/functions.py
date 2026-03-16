@@ -1,7 +1,7 @@
 """Funcões para criar autores e livros, com validação de dados e tratamento de erros."""
 
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from models import Autor, Livro
 from schemas import AutorBase, LivroBase
 
@@ -49,7 +49,13 @@ def criar_livro(db: Session, livro_validacao: LivroBase):
 
 def listar_livros_de_todos_autores(db: Session):
     """Lista os livros de um autor, com validação de dados e tratamento de erros."""
-    livros_autores = db.query(Livro).join(Autor).filter(Livro.situacao == True).all()
+    livros_autores = (
+        db.query(Livro)
+        .options(joinedload(Livro.autor))
+        .join(Autor)
+        .filter(Livro.situacao == True)
+        .all()
+    )
     if not livros_autores:
         raise HTTPException(status_code=404, detail="Nenhum livro encontrado.")
     return livros_autores
@@ -77,3 +83,31 @@ def remover_livro(db: Session, livro_id: int):
     livro.situacao = False
     db.commit()
     return {"mensagem": "Livro removido com sucesso."}
+
+
+def editar_nomelivro(db: Session, livro_id: int, novo_titulo: str):
+    """Edita o nome do livro atraves do id"""
+    livro_editar = (
+        db.query(Livro).filter(Livro.id == livro_id, Livro.situacao == True).first()
+    )
+
+    if not livro_editar:
+        raise HTTPException(status_code=404, detail="Livro nao encontrado")
+
+    livro_editar.titulo = novo_titulo
+    db.commit()
+    db.refresh()
+    return {"Mensagem": "Titulo editado com sucesso"}
+
+
+def quantidade_livro_autor(
+    db: Session,
+    autor_id: int,
+) -> dict:
+    """Cria a funcao que lista a quantidade de livros do autor"""
+    nome_autor = db.query(Autor.nome).filter(Autor.id == autor_id).scalar()
+    if not nome_autor:
+        raise HTTPException(status_code=404, detail="Nenhum autor encontrado")
+    quantidade = db.query(Livro).filter(Livro.autor_id == autor_id).count()
+
+    return {f"O autor {nome_autor} tem {quantidade} livros"}
