@@ -2,7 +2,6 @@
 
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
-from connection import engine
 
 Base = declarative_base()
 
@@ -29,8 +28,4 @@ class Livro(Base):
     genero = Column(String, nullable=False)
     autor_id = Column(Integer, ForeignKey("autores.id"), nullable=False)
     situacao = Column(Boolean, default=True)
-    ano_publi = Column(String, nullable=False)
     autor = relationship("Autor", back_populates="livros")
-
-
-Base.metadata.create_all(bind=engine)
