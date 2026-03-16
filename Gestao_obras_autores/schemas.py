@@ -18,3 +18,19 @@ class LivroBase(BaseModel):
     titulo: str
     autor_id: int
     genero: Literal["Ficção", "Ciência", "Fantasia", "Romance", "Terror", "Aventura"]
+
+
+class UsuarioCriar(BaseModel):
+    """Schema para quando o usuario esta se cadastrando"""
+
+    email: str
+    senha: str
+
+
+class UsuarioResposta(BaseModel):
+    """Schema para quando a API devolve os dados do usuario"""
+
+    id: int
+    email: str
+
+    model_config = {"from_attributes": True}
