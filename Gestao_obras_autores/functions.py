@@ -2,8 +2,10 @@
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
-from models import Autor, Livro
-from schemas import AutorBase, LivroBase
+from models import Autor, Livro, Usuario
+from schemas import AutorBase, LivroBase, UsuarioCriar
+from security import gerar_hash_senha, verificar_senha
+from security import criar_token_jwt
 
 
 def criar_autor(db: Session, autor_validacao: AutorBase):
@@ -115,3 +117,30 @@ def quantidade_livro_autor(
     )
 
     return {"mensagem": f"O autor {nome_autor} tem {quantidade} livros"}
+
+
+def criar_usuario(db: Session, novo_usuario: UsuarioCriar):
+    """Cria um usuario com senha criptografada pelo metodo JWT"""
+    if db.query(Usuario).filter(Usuario.email == novo_usuario.email).first():
+        raise HTTPException(status_code=400, detail="Email ja existe")
+    senha_criptografada = gerar_hash_senha(novo_usuario.senha)
+    usuario_novo = Usuario(email=novo_usuario.email, senha=senha_criptografada)
+
+    db.add(usuario_novo)
+    db.commit()
+    db.refresh(usuario_novo)
+    return usuario_novo
+
+
+def login(db: Session, email: str, senha: str):
+    """Logar como usuario"""
+    usuario = db.query(Usuario).filter(Usuario.email == email).first()
+    if not usuario:
+        raise HTTPException(status_code=400, detail="Credenciais incorretas")
+
+    senha_correta = verificar_senha(senha, usuario.senha)
+
+    if not senha_correta:
+        raise HTTPException(status_code=400, detail="Credenciais incorretas")
+    token = criar_token_jwt({"sub": usuario.email})
+    return {"access_token": token, "token_type": "bearer"}
