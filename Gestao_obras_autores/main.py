@@ -11,15 +11,24 @@ from functions import (
     remover_livro,
     editar_nomelivro,
     quantidade_livro_autor,
+    criar_usuario,
+    login,
 )
-from schemas import AutorBase, LivroBase
+from schemas import AutorBase, LivroBase, UsuarioResposta, UsuarioCriar
+from security import verificar_token
+from fastapi.security import OAuth2PasswordRequestForm
 
 app = FastAPI()
 
 
 @app.post("/autores/")
-def criar_autor_endpoint(autor: AutorBase, db: Session = Depends(get_db)):
+def criar_autor_endpoint(
+    autor: AutorBase,
+    db: Session = Depends(get_db),
+    email_usuario: str = Depends(verificar_token),
+):
     """Endpoint para criar um autor, utilizando a função criar_autor."""
+    print(f"O usuário {email_usuario} acabou de passar pela catraca.")
     return criar_autor(db, autor)
 
 
@@ -60,3 +69,18 @@ def listar_livros_autor_endpoint(autor_id: int, db: Session = Depends(get_db)):
     """Lista a quantidade de livros escritos por determinado autor"""
 
     return quantidade_livro_autor(db, autor_id)
+
+
+@app.post("/usuario/", response_model=UsuarioResposta)
+def criar_usuario_endpoint(novo_usuario: UsuarioCriar, db: Session = Depends(get_db)):
+    """Conecta a API para criar um novo usuario"""
+    return criar_usuario(db, novo_usuario)
+
+
+@app.post("/login")
+def logar_endpoint(
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
+    email_digitado = form_data.username
+    senha_digitada = form_data.password
+    return login(db, email_digitado, senha_digitada)
