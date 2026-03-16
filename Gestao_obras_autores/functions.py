@@ -96,7 +96,7 @@ def editar_nomelivro(db: Session, livro_id: int, novo_titulo: str):
 
     livro_editar.titulo = novo_titulo
     db.commit()
-    db.refresh()
+    db.refresh(livro_editar)
     return {"Mensagem": "Titulo editado com sucesso"}
 
 
@@ -108,6 +108,10 @@ def quantidade_livro_autor(
     nome_autor = db.query(Autor.nome).filter(Autor.id == autor_id).scalar()
     if not nome_autor:
         raise HTTPException(status_code=404, detail="Nenhum autor encontrado")
-    quantidade = db.query(Livro).filter(Livro.autor_id == autor_id).count()
+    quantidade = (
+        db.query(Livro)
+        .filter(Livro.autor_id == autor_id, Livro.situacao == True)
+        .count()
+    )
 
-    return {f"O autor {nome_autor} tem {quantidade} livros"}
+    return {"mensagem": f"O autor {nome_autor} tem {quantidade} livros"}
