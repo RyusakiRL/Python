@@ -29,3 +29,13 @@ class Livro(Base):
     autor_id = Column(Integer, ForeignKey("autores.id"), nullable=False)
     situacao = Column(Boolean, default=True)
     autor = relationship("Autor", back_populates="livros")
+
+
+class Usuario(Base):
+    """Cria a tabela SQL de usuarios"""
+
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    senha = Column(String, nullable=False)
