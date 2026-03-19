@@ -1,6 +1,6 @@
 """Moldes de schemas para validacao de dados"""
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class PresetsValidacao(BaseModel):
@@ -10,6 +10,7 @@ class PresetsValidacao(BaseModel):
     software_usado: str
     nivel_ganho: float
     distorcao: bool
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ValidarProdutor(BaseModel):
